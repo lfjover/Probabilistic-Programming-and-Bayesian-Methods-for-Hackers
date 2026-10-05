@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Soft Linen · Quiet Mood</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --oat: #ebe4d8;
+      --oat-deep: #d9d0c1;
+      --ink: #2a2c28;
+      --soft: #6a6f68;
+      --eucalyptus: #5f7d6a;
+      --eucalyptus-deep: #486153;
+      --chalk: #f7f3eb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: "Figtree", sans-serif;
+      color: var(--ink);
+      background: #1f211e;
+      display: grid;
+      place-items: center;
+      padding: 1.25rem;
+    }
+
+    .shell {
+      width: min(390px, 100%);
+      min-height: min(844px, 100vh);
+      border-radius: 2rem;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(ellipse 90% 50% at 80% -10%, rgba(95, 125, 106, 0.18) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 40% at 0% 60%, rgba(255, 255, 255, 0.35) 0%, transparent 50%),
+        linear-gradient(165deg, #f3eee4 0%, #ebe4d8 42%, #e3dccf 100%);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    }
+
+    .fabric {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.28) 48%, transparent 62%),
+        repeating-linear-gradient(
+          90deg,
+          rgba(42, 44, 40, 0.015) 0,
+          rgba(42, 44, 40, 0.015) 1px,
+          transparent 1px,
+          transparent 7px
+        );
+      animation: fabricDrift 14s ease-in-out infinite alternate;
+      mix-blend-mode: soft-light;
+    }
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      min-height: min(844px, 100vh);
+      padding: 2rem 1.5rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .back {
+      color: var(--soft);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 2.4rem;
+      width: fit-content;
+    }
+
+    .brand {
+      font-family: "Newsreader", serif;
+      font-weight: 500;
+      font-size: clamp(2.7rem, 10vw, 3.25rem);
+      letter-spacing: -0.035em;
+      line-height: 0.95;
+      animation: rise 0.85s ease both;
+    }
+
+    .prompt {
+      margin-top: 0.85rem;
+      color: var(--soft);
+      font-size: 1.05rem;
+      max-width: 17rem;
+      animation: rise 0.95s ease both;
+      animation-delay: 0.08s;
+    }
+
+    .words {
+      margin: 2.5rem 0 auto;
+      display: grid;
+      gap: 0.7rem;
+      animation: rise 1s ease both;
+      animation-delay: 0.16s;
+    }
+
+    .word {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      text-align: left;
+      padding: 0.85rem 0;
+      font-family: "Newsreader", serif;
+      font-size: 1.65rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      color: rgba(42, 44, 40, 0.38);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.3s ease, padding-left 0.3s ease;
+      border-bottom: 1px solid rgba(42, 44, 40, 0.08);
+    }
+
+    .word::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--eucalyptus);
+      transform: translateY(-50%);
+      transition: width 0.3s ease;
+    }
+
+    .word:hover,
+    .word[aria-pressed="true"] {
+      color: var(--ink);
+      padding-left: 1rem;
+    }
+
+    .word[aria-pressed="true"]::before {
+      width: 0.55rem;
+    }
+
+    .focus {
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      right: -20px;
+      top: 38%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(95, 125, 106, 0.16), transparent 70%);
+      animation: focusPulse 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .cta {
+      appearance: none;
+      border: 0;
+      width: 100%;
+      border-radius: 999px;
+      padding: 1rem 1.25rem;
+      background: var(--eucalyptus);
+      color: #f6f8f5;
+      font: inherit;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.25s ease, opacity 0.2s ease, transform 0.2s ease;
+      animation: rise 1.1s ease both;
+      animation-delay: 0.22s;
+    }
+
+    .cta:hover { background: var(--eucalyptus-deep); }
+    .cta:active { transform: scale(0.985); }
+    .cta:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .ritual,
+    .done { display: none; flex-direction: column; min-height: inherit; }
+
+    .shell[data-step="ritual"] .checkin,
+    .shell[data-step="done"] .checkin { display: none; }
+    .shell[data-step="ritual"] .ritual { display: flex; }
+    .shell[data-step="done"] .done { display: flex; }
+
+    .ritual h2,
+    .done h2 {
+      font-family: "Newsreader", serif;
+      font-weight: 500;
+      font-size: 2.15rem;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      margin: 1.4rem 0 0.7rem;
+    }
+
+    .ritual p,
+    .done p {
+      color: var(--soft);
+      max-width: 18rem;
+    }
+
+    .breath-box {
+      margin: 2.5rem auto;
+      width: 160px;
+      height: 160px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.35);
+      box-shadow: inset 0 0 0 1px rgba(42, 44, 40, 0.06);
+      display: grid;
+      place-items: center;
+      animation: boxBreathe 6s ease-in-out infinite;
+    }
+
+    .breath-box span {
+      font-family: "Newsreader", serif;
+      font-size: 1.15rem;
+      color: var(--eucalyptus-deep);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1.5rem 0 auto;
+    }
+
+    .chip {
+      appearance: none;
+      border: 1px solid rgba(42, 44, 40, 0.1);
+      background: rgba(255, 255, 255, 0.4);
+      color: var(--soft);
+      border-radius: 999px;
+      padding: 0.55rem 0.9rem;
+      font: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .chip[aria-pressed="true"] {
+      background: rgba(95, 125, 106, 0.14);
+      border-color: rgba(95, 125, 106, 0.45);
+      color: var(--eucalyptus-deep);
+    }
+
+    .actions {
+      margin-top: auto;
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .ghost {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--soft);
+      font: inherit;
+      font-weight: 500;
+      padding: 0.75rem;
+      cursor: pointer;
+    }
+
+    .chosen-word {
+      margin: 2rem 0 auto;
+      font-family: "Newsreader", serif;
+      font-size: 2.4rem;
+      letter-spacing: -0.03em;
+      color: var(--eucalyptus-deep);
+    }
+
+    @keyframes fabricDrift {
+      from { transform: translateX(-2%) scale(1.02); }
+      to { transform: translateX(2%) scale(1.05); }
+    }
+
+    @keyframes focusPulse {
+      0%, 100% { transform: scale(0.9); opacity: 0.55; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+
+    @keyframes boxBreathe {
+      0%, 100% { transform: scale(0.92); }
+      50% { transform: scale(1.06); }
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell" data-step="checkin" id="app">
+    <div class="fabric" aria-hidden="true"></div>
+    <div class="focus" aria-hidden="true"></div>
+
+    <section class="screen checkin">
+      <a class="back" href="../index.html">← Gallery</a>
+      <h1 class="brand">Soft Linen</h1>
+      <p class="prompt">A quiet moment for your mood. Choose the word that fits.</p>
+
+      <div class="words" role="group" aria-label="Choose a mood word">
+        <button class="word" type="button" data-mood="Ease" aria-pressed="false">Ease</button>
+        <button class="word" type="button" data-mood="Focus" aria-pressed="false">Focus</button>
+        <button class="word" type="button" data-mood="Drift" aria-pressed="false">Drift</button>
+        <button class="word" type="button" data-mood="Warmth" aria-pressed="false">Warmth</button>
+        <button class="word" type="button" data-mood="Quiet" aria-pressed="false">Quiet</button>
+      </div>
+
+      <button class="cta" id="continue" type="button" disabled>Continue</button>
+    </section>
+
+    <section class="screen ritual">
+      <a class="back" href="../index.html">← Gallery</a>
+      <h2>Stay with it</h2>
+      <p>One soft breath cycle. Optional tags if something else is present.</p>
+      <div class="breath-box" aria-hidden="true"><span id="breathText">Inhale</span></div>
+      <div class="chips" role="group" aria-label="Optional tags">
+        <button class="chip" type="button" aria-pressed="false">Body</button>
+        <button class="chip" type="button" aria-pressed="false">Mind</button>
+        <button class="chip" type="button" aria-pressed="false">People</button>
+        <button class="chip" type="button" aria-pressed="false">Work</button>
+        <button class="chip" type="button" aria-pressed="false">Rest</button>
+      </div>
+      <div class="actions">
+        <button class="cta" id="save" type="button">Save check-in</button>
+        <button class="ghost" id="skip" type="button">Skip tags</button>
+      </div>
+    </section>
+
+    <section class="screen done">
+      <a class="back" href="../index.html">← Gallery</a>
+      <h2>Logged softly</h2>
+      <p>Nothing to optimize. Just a record of how this moment felt.</p>
+      <div class="chosen-word" id="chosenWord">Ease</div>
+      <div class="actions">
+        <button class="cta" id="again" type="button">Begin again</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const app = document.getElementById("app");
+    const words = [...document.querySelectorAll(".word")];
+    const chips = [...document.querySelectorAll(".chip")];
+    const continueBtn = document.getElementById("continue");
+    const breathText = document.getElementById("breathText");
+    let selected = null;
+    let breathTimer;
+
+    words.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        words.forEach((w) => w.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        selected = btn.dataset.mood;
+        continueBtn.disabled = false;
+      });
+    });
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const on = chip.getAttribute("aria-pressed") === "true";
+        chip.setAttribute("aria-pressed", on ? "false" : "true");
+      });
+    });
+
+    const startBreath = () => {
+      const phases = ["Inhale", "Hold", "Exhale", "Rest"];
+      let i = 0;
+      breathText.textContent = phases[0];
+      clearInterval(breathTimer);
+      breathTimer = setInterval(() => {
+        i = (i + 1) % phases.length;
+        breathText.textContent = phases[i];
+      }, 1500);
+    };
+
+    const finish = () => {
+      clearInterval(breathTimer);
+      document.getElementById("chosenWord").textContent = selected;
+      app.dataset.step = "done";
+    };
+
+    continueBtn.addEventListener("click", () => {
+      if (!selected) return;
+      app.dataset.step = "ritual";
+      startBreath();
+    });
+
+    document.getElementById("save").addEventListener("click", finish);
+    document.getElementById("skip").addEventListener("click", finish);
+    document.getElementById("again").addEventListener("click", () => {
+      selected = null;
+      continueBtn.disabled = true;
+      words.forEach((w) => w.setAttribute("aria-pressed", "false"));
+      chips.forEach((c) => c.setAttribute("aria-pressed", "false"));
+      app.dataset.step = "checkin";
+    });
+  </script>
+</body>
+</html>

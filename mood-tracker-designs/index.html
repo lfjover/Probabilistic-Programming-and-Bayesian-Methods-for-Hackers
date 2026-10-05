@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mood Tracker · Meditation Design Examples</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,550;9..144,650&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1c2420;
+      --muted: #5c6a62;
+      --paper: #edf1ec;
+      --wash: #d7e2d8;
+      --accent: #3f6b55;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 80% 50% at 10% -10%, #c9dccf 0%, transparent 55%),
+        radial-gradient(ellipse 70% 45% at 90% 0%, #c5d5df 0%, transparent 50%),
+        linear-gradient(180deg, #e8efe9 0%, #f3f6f2 40%, #e6ebe7 100%);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 2.5rem));
+      margin: 0 auto;
+      padding: 3.5rem 0 5rem;
+    }
+
+    .intro {
+      max-width: 38rem;
+      margin-bottom: 3rem;
+      animation: rise 0.9s ease both;
+    }
+
+    .intro h1 {
+      font-family: "Fraunces", serif;
+      font-weight: 550;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 0.85rem;
+    }
+
+    .intro p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 34rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; max-width: 420px; }
+    }
+
+    .direction {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      animation: rise 1s ease both;
+    }
+
+    .direction:nth-child(2) { animation-delay: 0.12s; }
+    .direction:nth-child(3) { animation-delay: 0.24s; }
+
+    .phone {
+      position: relative;
+      border-radius: 2rem;
+      overflow: hidden;
+      aspect-ratio: 9 / 16;
+      box-shadow:
+        0 24px 60px rgba(28, 36, 32, 0.14),
+        0 0 0 1px rgba(28, 36, 32, 0.06);
+      background: #111;
+    }
+
+    .phone img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.7s ease;
+    }
+
+    .direction:hover .phone img {
+      transform: scale(1.03);
+    }
+
+    .meta h2 {
+      font-family: "Fraunces", serif;
+      font-weight: 550;
+      font-size: 1.55rem;
+      letter-spacing: -0.02em;
+    }
+
+    .meta p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 0.35rem 0 0.85rem;
+    }
+
+    .meta a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.92rem;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s ease;
+    }
+
+    .meta a:hover {
+      border-bottom-color: var(--accent);
+    }
+
+    .notes {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(28, 36, 32, 0.1);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      animation: rise 1.1s ease both;
+      animation-delay: 0.3s;
+    }
+
+    @media (max-width: 900px) {
+      .notes { grid-template-columns: 1fr; }
+    }
+
+    .notes h3 {
+      font-family: "Fraunces", serif;
+      font-size: 1.1rem;
+      font-weight: 550;
+      margin-bottom: 0.4rem;
+    }
+
+    .notes p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="intro">
+      <h1>Mood tracker, meditation-led</h1>
+      <p>
+        Three design directions that borrow the pacing and atmosphere of meditation apps —
+        soft light, breath-led motion, and quiet check-ins instead of dashboard chrome.
+      </p>
+    </header>
+
+    <section class="grid" aria-label="Design directions">
+      <article class="direction">
+        <div class="phone">
+          <img src="assets/still_grove_mood_checkin.jpg" alt="Still Grove mood check-in concept" />
+        </div>
+        <div class="meta">
+          <h2>Still Grove</h2>
+          <p>Misty forest dawn. Moods as soft botanical marks in a clearing of light.</p>
+          <a href="still-grove/index.html">Open interactive prototype →</a>
+        </div>
+      </article>
+
+      <article class="direction">
+        <div class="phone">
+          <img src="assets/night_harbor_evening_checkin.jpg" alt="Night Harbor evening check-in concept" />
+        </div>
+        <div class="meta">
+          <h2>Night Harbor</h2>
+          <p>Deep water at dusk. A breathing ring for evening reflection and soft amber focus.</p>
+          <a href="night-harbor/index.html">Open interactive prototype →</a>
+        </div>
+      </article>
+
+      <article class="direction">
+        <div class="phone">
+          <img src="assets/soft_linen_quiet_moment.jpg" alt="Soft Linen quiet moment concept" />
+        </div>
+        <div class="meta">
+          <h2>Soft Linen</h2>
+          <p>Airy studio calm. Oat linen and eucalyptus for a light, unhurried check-in.</p>
+          <a href="soft-linen/index.html">Open interactive prototype →</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="notes" aria-label="Shared principles">
+      <div>
+        <h3>Brand first</h3>
+        <p>Each first screen leads with the product name as the hero signal, then one prompt and one action.</p>
+      </div>
+      <div>
+        <h3>Abstract moods</h3>
+        <p>Soft marks and quiet words replace emoji faces — closer to meditation rituals than social stickers.</p>
+      </div>
+      <div>
+        <h3>Breath as motion</h3>
+        <p>Ripples, mist, and slow pulses create presence without noise or dashboard clutter.</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

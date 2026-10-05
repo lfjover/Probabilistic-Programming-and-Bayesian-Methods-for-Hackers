@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Still Grove · Mood Check-in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,550;9..144,650&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --moss: #3f6b55;
+      --moss-deep: #2c4a3b;
+      --fog: #d7e4d9;
+      --mist: #eef4ef;
+      --sky: #9bb7c4;
+      --sand: #d8c4a8;
+      --ink: #1d2a24;
+      --soft: rgba(29, 42, 36, 0.62);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background: #0f1612;
+      display: grid;
+      place-items: center;
+      padding: 1.25rem;
+    }
+
+    .shell {
+      width: min(390px, 100%);
+      min-height: min(844px, 100vh);
+      border-radius: 2rem;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(ellipse 90% 55% at 50% -5%, rgba(214, 230, 218, 0.95) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 40% at 80% 30%, rgba(155, 183, 196, 0.35) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 35% at 15% 70%, rgba(216, 196, 168, 0.28) 0%, transparent 50%),
+        linear-gradient(180deg, #c5d8c9 0%, #dce8de 35%, #e8efe8 70%, #d4e0d6 100%);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    }
+
+    .mist {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.35), transparent 28%),
+        radial-gradient(circle at 70% 55%, rgba(255, 255, 255, 0.22), transparent 32%);
+      animation: mistDrift 12s ease-in-out infinite alternate;
+    }
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      min-height: min(844px, 100vh);
+      padding: 2rem 1.5rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .back {
+      font-size: 0.85rem;
+      color: var(--soft);
+      text-decoration: none;
+      margin-bottom: 2.5rem;
+      width: fit-content;
+    }
+
+    .brand {
+      font-family: "Fraunces", serif;
+      font-weight: 550;
+      font-size: clamp(2.6rem, 10vw, 3.15rem);
+      letter-spacing: -0.03em;
+      line-height: 0.95;
+      animation: rise 0.8s ease both;
+    }
+
+    .prompt {
+      margin-top: 0.85rem;
+      color: var(--soft);
+      font-size: 1.05rem;
+      max-width: 16rem;
+      animation: rise 0.9s ease both;
+      animation-delay: 0.08s;
+    }
+
+    .stage {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      position: relative;
+      margin: 1.5rem 0;
+    }
+
+    .breath {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 1px solid rgba(63, 107, 85, 0.28);
+      animation: breathe 5.5s ease-in-out infinite;
+    }
+
+    .breath::before,
+    .breath::after {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border-radius: 50%;
+      border: 1px solid rgba(63, 107, 85, 0.18);
+    }
+
+    .breath::after {
+      inset: 34%;
+      border-color: rgba(63, 107, 85, 0.12);
+    }
+
+    .moods {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.55rem;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+      animation: rise 1s ease both;
+      animation-delay: 0.16s;
+    }
+
+    .mood {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.55rem;
+      color: var(--soft);
+      font: inherit;
+      font-size: 0.72rem;
+      font-weight: 500;
+      transition: color 0.25s ease;
+    }
+
+    .mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: inset 0 0 0 1px rgba(29, 42, 36, 0.08);
+    }
+
+    .mark svg {
+      width: 22px;
+      height: 22px;
+      opacity: 0.85;
+    }
+
+    .mood[data-mood="calm"] .mark { background: #8fae97; }
+    .mood[data-mood="soft"] .mark { background: #b7c9b8; }
+    .mood[data-mood="heavy"] .mark { background: #7a8a84; }
+    .mood[data-mood="restless"] .mark { background: #c9b08d; }
+    .mood[data-mood="bright"] .mark { background: #d4a89a; }
+
+    .mood:hover .mark,
+    .mood[aria-pressed="true"] .mark {
+      transform: translateY(-4px) scale(1.06);
+      box-shadow: 0 10px 24px rgba(44, 74, 59, 0.22);
+    }
+
+    .mood[aria-pressed="true"] {
+      color: var(--moss-deep);
+    }
+
+    .cta {
+      margin-top: auto;
+      appearance: none;
+      border: 0;
+      width: 100%;
+      border-radius: 999px;
+      padding: 1rem 1.25rem;
+      background: var(--moss);
+      color: #f4f8f5;
+      font: inherit;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.2s ease, opacity 0.2s ease;
+      animation: rise 1.05s ease both;
+      animation-delay: 0.22s;
+    }
+
+    .cta:hover { background: var(--moss-deep); }
+    .cta:active { transform: scale(0.985); }
+    .cta:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .reflect,
+    .done {
+      display: none;
+      flex-direction: column;
+      min-height: inherit;
+    }
+
+    .shell[data-step="reflect"] .checkin,
+    .shell[data-step="done"] .checkin { display: none; }
+    .shell[data-step="reflect"] .reflect { display: flex; }
+    .shell[data-step="done"] .done { display: flex; }
+
+    .reflect h2,
+    .done h2 {
+      font-family: "Fraunces", serif;
+      font-weight: 550;
+      font-size: 2rem;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    .reflect p,
+    .done p {
+      color: var(--soft);
+      max-width: 18rem;
+    }
+
+    textarea {
+      margin: 2rem 0;
+      width: 100%;
+      min-height: 140px;
+      border: 0;
+      resize: none;
+      border-radius: 1.25rem;
+      padding: 1.1rem 1.15rem;
+      background: rgba(255, 255, 255, 0.45);
+      color: var(--ink);
+      font: inherit;
+      line-height: 1.5;
+      outline: none;
+      box-shadow: inset 0 0 0 1px rgba(29, 42, 36, 0.08);
+    }
+
+    .actions {
+      margin-top: auto;
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .ghost {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--soft);
+      font: inherit;
+      font-weight: 500;
+      padding: 0.75rem;
+      cursor: pointer;
+    }
+
+    .chosen {
+      margin-top: 2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      color: var(--moss-deep);
+      font-weight: 500;
+    }
+
+    .chosen .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--moss);
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(0.92); opacity: 0.55; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+
+    @keyframes mistDrift {
+      from { transform: translate3d(-1.5%, 0, 0) scale(1); }
+      to { transform: translate3d(1.5%, 1%, 0) scale(1.04); }
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell" data-step="checkin" id="app">
+    <div class="mist" aria-hidden="true"></div>
+
+    <section class="screen checkin">
+      <a class="back" href="../index.html">← Gallery</a>
+      <h1 class="brand">Still Grove</h1>
+      <p class="prompt">How are you feeling in this quiet moment?</p>
+
+      <div class="stage">
+        <div class="breath" aria-hidden="true"></div>
+        <div class="moods" role="group" aria-label="Choose a mood">
+          <button class="mood" type="button" data-mood="calm" aria-pressed="false">
+            <span class="mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1d2a24" stroke-width="1.5"><path d="M12 20c0-6 4-10 8-12-2 6-4 9-8 12Z"/><path d="M12 20c0-6-4-10-8-12 2 6 4 9 8 12Z"/></svg>
+            </span>
+            Calm
+          </button>
+          <button class="mood" type="button" data-mood="soft" aria-pressed="false">
+            <span class="mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1d2a24" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>
+            </span>
+            Soft
+          </button>
+          <button class="mood" type="button" data-mood="heavy" aria-pressed="false">
+            <span class="mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1d2a24" stroke-width="1.5"><path d="M5 15c2-1 4-1 7 0s5 1 7 0"/><path d="M5 10c2-1 4-1 7 0s5 1 7 0"/></svg>
+            </span>
+            Heavy
+          </button>
+          <button class="mood" type="button" data-mood="restless" aria-pressed="false">
+            <span class="mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1d2a24" stroke-width="1.5"><path d="M4 14c3-6 5-8 8-8s5 2 8 8"/><path d="M8 18h8"/></svg>
+            </span>
+            Restless
+          </button>
+          <button class="mood" type="button" data-mood="bright" aria-pressed="false">
+            <span class="mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1d2a24" stroke-width="1.5"><path d="M12 5l1.5 4.5L18 11l-4.5 1.5L12 17l-1.5-4.5L6 11l4.5-1.5L12 5Z"/></svg>
+            </span>
+            Bright
+          </button>
+        </div>
+      </div>
+
+      <button class="cta" id="begin" type="button" disabled>Begin check-in</button>
+    </section>
+
+    <section class="screen reflect">
+      <a class="back" href="../index.html">← Gallery</a>
+      <h2>Leave a soft note</h2>
+      <p>Optional. A few words can help this feeling settle.</p>
+      <textarea id="note" placeholder="What is present right now?"></textarea>
+      <div class="actions">
+        <button class="cta" id="save" type="button">Save this moment</button>
+        <button class="ghost" id="skip" type="button">Skip for now</button>
+      </div>
+    </section>
+
+    <section class="screen done">
+      <a class="back" href="../index.html">← Gallery</a>
+      <h2>Held with care</h2>
+      <p>Your mood is logged. Come back when the next quiet moment arrives.</p>
+      <div class="chosen"><span class="dot" id="chosenDot"></span><span id="chosenLabel">Calm</span></div>
+      <div class="actions">
+        <button class="cta" id="again" type="button">Check in again</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const app = document.getElementById("app");
+    const moods = [...document.querySelectorAll(".mood")];
+    const begin = document.getElementById("begin");
+    const colors = {
+      calm: "#8fae97", soft: "#b7c9b8", heavy: "#7a8a84",
+      restless: "#c9b08d", bright: "#d4a89a"
+    };
+    let selected = null;
+
+    moods.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        moods.forEach((m) => m.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        selected = btn.dataset.mood;
+        begin.disabled = false;
+      });
+    });
+
+    begin.addEventListener("click", () => {
+      if (!selected) return;
+      app.dataset.step = "reflect";
+    });
+
+    const finish = () => {
+      document.getElementById("chosenLabel").textContent =
+        selected.charAt(0).toUpperCase() + selected.slice(1);
+      document.getElementById("chosenDot").style.background = colors[selected];
+      app.dataset.step = "done";
+    };
+
+    document.getElementById("save").addEventListener("click", finish);
+    document.getElementById("skip").addEventListener("click", finish);
+    document.getElementById("again").addEventListener("click", () => {
+      selected = null;
+      begin.disabled = true;
+      moods.forEach((m) => m.setAttribute("aria-pressed", "false"));
+      document.getElementById("note").value = "";
+      app.dataset.step = "checkin";
+    });
+  </script>
+</body>
+</html>

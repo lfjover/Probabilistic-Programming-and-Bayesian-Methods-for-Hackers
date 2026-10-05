@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Night Harbor · Evening Mood</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --deep: #0d1a22;
+      --slate: #1a2f3b;
+      --teal: #2a4d57;
+      --mist: #9eb4bc;
+      --foam: #d7e4e8;
+      --amber: #c9894a;
+      --amber-deep: #a86d35;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: "DM Sans", sans-serif;
+      color: var(--foam);
+      background: #05090c;
+      display: grid;
+      place-items: center;
+      padding: 1.25rem;
+    }
+
+    .shell {
+      width: min(390px, 100%);
+      min-height: min(844px, 100vh);
+      border-radius: 2rem;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(ellipse 80% 45% at 50% 0%, rgba(61, 96, 110, 0.55) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 40% at 20% 80%, rgba(201, 137, 74, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #152833 0%, #0f1d26 45%, #0a141b 100%);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    }
+
+    .waves {
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 45%;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 120% 60% at 50% 100%, rgba(42, 77, 87, 0.55), transparent 70%),
+        repeating-linear-gradient(
+          180deg,
+          transparent 0,
+          transparent 18px,
+          rgba(158, 180, 188, 0.04) 18px,
+          rgba(158, 180, 188, 0.04) 19px
+        );
+      animation: waveShift 10s ease-in-out infinite alternate;
+      opacity: 0.9;
+    }
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      min-height: min(844px, 100vh);
+      padding: 2rem 1.5rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .back {
+      color: rgba(215, 228, 232, 0.55);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 2.25rem;
+      width: fit-content;
+    }
+
+    .brand {
+      font-family: "Instrument Serif", serif;
+      font-weight: 400;
+      font-size: clamp(2.7rem, 10vw, 3.3rem);
+      letter-spacing: -0.02em;
+      line-height: 0.95;
+      animation: rise 0.85s ease both;
+    }
+
+    .prompt {
+      margin-top: 0.8rem;
+      color: var(--mist);
+      font-size: 1.05rem;
+      max-width: 17rem;
+      animation: rise 0.95s ease both;
+      animation-delay: 0.08s;
+    }
+
+    .stage {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      position: relative;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .ring {
+      width: 230px;
+      height: 230px;
+      border-radius: 50%;
+      position: relative;
+      display: grid;
+      place-items: center;
+      animation: rise 1s ease both;
+      animation-delay: 0.14s;
+    }
+
+    .ring::before,
+    .ring::after,
+    .pulse {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(158, 180, 188, 0.28);
+    }
+
+    .ring::before { animation: ripple 5s ease-out infinite; }
+    .ring::after { inset: 14%; animation: ripple 5s ease-out infinite 0.8s; }
+    .pulse {
+      inset: 28%;
+      background: radial-gradient(circle, rgba(42, 77, 87, 0.55), rgba(42, 77, 87, 0.05));
+      border: 0;
+      animation: breathe 5s ease-in-out infinite;
+    }
+
+    .core {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      font-family: "Instrument Serif", serif;
+      font-size: 1.35rem;
+      font-style: italic;
+      color: var(--foam);
+    }
+
+    .core small {
+      display: block;
+      margin-top: 0.35rem;
+      font-family: "DM Sans", sans-serif;
+      font-style: normal;
+      font-size: 0.75rem;
+      color: var(--mist);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .orbit {
+      position: absolute;
+      inset: -8px;
+      list-style: none;
+    }
+
+    .orbit li {
+      position: absolute;
+      font-size: 0.78rem;
+      color: rgba(215, 228, 232, 0.55);
+      transition: color 0.25s ease;
+    }
+
+    .orbit li[data-active="true"] { color: var(--foam); }
+
+    .orbit li:nth-child(1) { top: -4%; left: 50%; transform: translateX(-50%); }
+    .orbit li:nth-child(2) { top: 28%; right: -8%; }
+    .orbit li:nth-child(3) { bottom: 8%; right: 8%; }
+    .orbit li:nth-child(4) { bottom: 8%; left: 8%; }
+    .orbit li:nth-child(5) { top: 28%; left: -6%; }
+
+    .mood-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.4rem;
+      margin-bottom: 1.1rem;
+      animation: rise 1.05s ease both;
+      animation-delay: 0.2s;
+    }
+
+    .mood {
+      appearance: none;
+      border: 1px solid rgba(158, 180, 188, 0.18);
+      background: rgba(26, 47, 59, 0.45);
+      color: var(--mist);
+      border-radius: 999px;
+      padding: 0.65rem 0.2rem;
+      font: inherit;
+      font-size: 0.68rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+
+    .mood[aria-pressed="true"] {
+      background: rgba(201, 137, 74, 0.18);
+      border-color: rgba(201, 137, 74, 0.55);
+      color: var(--foam);
+    }
+
+    .cta {
+      appearance: none;
+      border: 0;
+      width: 100%;
+      border-radius: 999px;
+      padding: 1rem 1.25rem;
+      background: var(--amber);
+      color: #1a1208;
+      font: inherit;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.25s ease, opacity 0.2s ease, transform 0.2s ease;
+      animation: rise 1.1s ease both;
+      animation-delay: 0.26s;
+    }
+
+    .cta:hover { background: var(--amber-deep); color: #fff; }
+    .cta:active { transform: scale(0.985); }
+    .cta:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .history,
+    .done { display: none; flex-direction: column; min-height: inherit; }
+
+    .shell[data-step="history"] .checkin,
+    .shell[data-step="done"] .checkin { display: none; }
+    .shell[data-step="history"] .history { display: flex; }
+    .shell[data-step="done"] .done { display: flex; }
+
+    .history h2,
+    .done h2 {
+      font-family: "Instrument Serif", serif;
+      font-size: 2.2rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      margin: 1.25rem 0 0.7rem;
+    }
+
+    .history p,
+    .done p {
+      color: var(--mist);
+      max-width: 18rem;
+    }
+
+    .timeline {
+      margin: 2rem 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .entry {
+      display: grid;
+      grid-template-columns: 10px 1fr;
+      gap: 0.85rem;
+      align-items: start;
+    }
+
+    .entry .bar {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 0.35rem;
+      background: var(--amber);
+      box-shadow: 0 0 0 4px rgba(201, 137, 74, 0.15);
+    }
+
+    .entry strong {
+      display: block;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .entry span {
+      color: rgba(215, 228, 232, 0.5);
+      font-size: 0.82rem;
+    }
+
+    .ghost {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: rgba(215, 228, 232, 0.55);
+      font: inherit;
+      font-weight: 500;
+      padding: 0.75rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+
+    .actions { margin-top: auto; display: grid; gap: 0.4rem; }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(0.92); opacity: 0.7; }
+      50% { transform: scale(1.06); opacity: 1; }
+    }
+
+    @keyframes ripple {
+      0% { transform: scale(0.85); opacity: 0.55; }
+      100% { transform: scale(1.2); opacity: 0; }
+    }
+
+    @keyframes waveShift {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell" data-step="checkin" id="app">
+    <div class="waves" aria-hidden="true"></div>
+
+    <section class="screen checkin">
+      <a class="back" href="../index.html">← Gallery</a>
+      <h1 class="brand">Night Harbor</h1>
+      <p class="prompt">Settle into this evening. What mood is arriving with the dark?</p>
+
+      <div class="stage">
+        <div class="ring" aria-hidden="true">
+          <div class="pulse"></div>
+          <ul class="orbit" id="orbit">
+            <li data-mood="grounded">Grounded</li>
+            <li data-mood="open">Open</li>
+            <li data-mood="tender">Tender</li>
+            <li data-mood="stormy">Stormy</li>
+            <li data-mood="clear">Clear</li>
+          </ul>
+          <div class="core">
+            <span id="coreLabel">Breathe</span>
+            <small>select a mood</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="mood-row" role="group" aria-label="Choose a mood">
+        <button class="mood" type="button" data-mood="grounded" aria-pressed="false">Grounded</button>
+        <button class="mood" type="button" data-mood="open" aria-pressed="false">Open</button>
+        <button class="mood" type="button" data-mood="tender" aria-pressed="false">Tender</button>
+        <button class="mood" type="button" data-mood="stormy" aria-pressed="false">Stormy</button>
+        <button class="mood" type="button" data-mood="clear" aria-pressed="false">Clear</button>
+      </div>
+
+      <button class="cta" id="log" type="button" disabled>Log tonight</button>
+    </section>
+
+    <section class="screen history">
+      <a class="back" href="../index.html">← Gallery</a>
+      <h2>This week’s harbor</h2>
+      <p>A soft trail of evenings, not a scoreboard.</p>
+      <div class="timeline" id="timeline"></div>
+      <div class="actions">
+        <button class="cta" id="toDone" type="button">Finish</button>
+      </div>
+    </section>
+
+    <section class="screen done">
+      <a class="back" href="../index.html">← Gallery</a>
+      <h2>Rest well</h2>
+      <p>Tonight’s mood is anchored. The water will still be here tomorrow.</p>
+      <div class="actions">
+        <button class="cta" id="again" type="button">Log another evening</button>
+        <button class="ghost" id="toHistory" type="button">View this week</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const app = document.getElementById("app");
+    const moods = [...document.querySelectorAll(".mood")];
+    const orbit = [...document.querySelectorAll(".orbit li")];
+    const log = document.getElementById("log");
+    const coreLabel = document.getElementById("coreLabel");
+    let selected = null;
+    const week = [
+      { mood: "Clear", when: "Sunday · dusk" },
+      { mood: "Tender", when: "Monday · night" },
+      { mood: "Stormy", when: "Wednesday · late" },
+      { mood: "Open", when: "Friday · evening" }
+    ];
+
+    moods.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        moods.forEach((m) => m.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        selected = btn.dataset.mood;
+        coreLabel.textContent = selected.charAt(0).toUpperCase() + selected.slice(1);
+        orbit.forEach((li) => {
+          li.dataset.active = li.dataset.mood === selected ? "true" : "false";
+        });
+        log.disabled = false;
+      });
+    });
+
+    log.addEventListener("click", () => {
+      if (!selected) return;
+      week.unshift({
+        mood: selected.charAt(0).toUpperCase() + selected.slice(1),
+        when: "Tonight · just now"
+      });
+      app.dataset.step = "done";
+    });
+
+    const renderTimeline = () => {
+      document.getElementById("timeline").innerHTML = week.slice(0, 5).map((e) => `
+        <div class="entry">
+          <span class="bar" aria-hidden="true"></span>
+          <div>
+            <strong>${e.mood}</strong>
+            <span>${e.when}</span>
+          </div>
+        </div>
+      `).join("");
+    };
+
+    document.getElementById("toHistory").addEventListener("click", () => {
+      renderTimeline();
+      app.dataset.step = "history";
+    });
+    document.getElementById("toDone").addEventListener("click", () => {
+      app.dataset.step = "done";
+    });
+    document.getElementById("again").addEventListener("click", () => {
+      selected = null;
+      log.disabled = true;
+      coreLabel.textContent = "Breathe";
+      moods.forEach((m) => m.setAttribute("aria-pressed", "false"));
+      orbit.forEach((li) => { li.dataset.active = "false"; });
+      app.dataset.step = "checkin";
+    });
+  </script>
+</body>
+</html>
